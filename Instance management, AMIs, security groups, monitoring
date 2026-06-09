@@ -1,0 +1,343 @@
+Developer
+    │
+    ▼
+ GitHub
+    │
+    ▼
+ Jenkins
+    │
+    ▼
+ Docker Build
+    │
+    ▼
+ Kubernetes
+    │
+    ▼
+ Terraform
+    │
+    ▼
+ AWS EC2
+    │
+    ▼
+ Security Groups
+    │
+    ▼
+ CloudWatch Monitoring
+    │
+    ▼
+ SQL Inventory Database
+
+// puppet code 
+package { 'nginx':
+  ensure => installed,
+}
+
+service { 'nginx':
+  ensure => running,
+  enable => true,
+}
+
+puppet apply nginx.pp
+
+// chef code
+package 'nginx' do
+  action :install
+end
+
+service 'nginx' do
+  action [:enable, :start]
+end
+
+chef-client
+
+
+// ansible 
+[web]
+54.23.11.1
+
+---
+- hosts: web
+
+  become: yes
+
+  tasks:
+
+  - name: Install nginx
+
+    apt:
+
+      name: nginx
+
+      state: present
+
+ansible-playbook nginx.yml
+
+GitHub
+  ↓
+Jenkins
+  ↓
+Tests
+  ↓
+Docker
+  ↓
+Terraform
+  ↓
+AWS EC2
+
+
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/company/aws-project'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'pytest'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t ec2-manager .'
+            }
+        }
+
+        stage('Terraform') {
+            steps {
+                sh 'terraform apply -auto-approve'
+            }
+        }
+
+    }
+}
+
+terraform destroy//
+terraform init
+terraform plan
+terraform apply
+
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_instance" "web" {
+
+  ami = "ami-123456"
+
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "WebServer"
+  }
+}
+
+kubectl apply -f deployment.yaml
+apiVersion: v1
+
+kind: Service
+
+metadata:
+  name: ec2-service
+
+spec:
+
+  selector:
+    app: ec2
+
+  ports:
+  - port: 80
+    targetPort: 5000
+
+  type: LoadBalancer
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: ec2-manager
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: ec2
+
+  template:
+
+    metadata:
+      labels:
+        app: ec2
+
+    spec:
+
+      containers:
+
+      - name: ec2-manager
+
+        image: ec2-manager:latest
+
+        ports:
+        - containerPort: 5000
+
+docker run -it ec2-manager
+docker build -t ec2-manager .
+
+FROM python:3.11
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD ["python","ec2_manager.py"]
+
+5. SQL Inventory database
+
+CREATE TABLE ec2_instances (
+    instance_id VARCHAR(50),
+    instance_type VARCHAR(50),
+    state VARCHAR(20),
+    public_ip VARCHAR(50),
+    launch_time TIMESTAMP
+);
+
+INSERT INTO ec2_instances
+VALUES (
+'i-123456',
+'t2.micro',
+'running',
+'54.23.11.1',
+CURRENT_TIMESTAMP
+);
+
+SELECT *
+FROM ec2_instances
+WHERE state='running';
+
+4// Cloudwatch alarm 
+
+cloudwatch = boto3.client('cloudwatch')
+
+cloudwatch.put_metric_alarm(
+    AlarmName='HighCPU',
+    MetricName='CPUUtilization',
+    Namespace='AWS/EC2',
+    Statistic='Average',
+    Period=300,
+    EvaluationPeriods=2,
+    Threshold=80,
+    ComparisonOperator='GreaterThanThreshold',
+    Dimensions=[
+        {
+            'Name': 'InstanceId',
+            'Value': 'i-123456'
+        }
+    ]
+)
+
+3.
+
+ec2.authorize_security_group_ingress(
+    GroupId=sg_id,
+    IpPermissions=[
+        {
+            'IpProtocol': 'tcp',
+            'FromPort': 80,
+            'ToPort': 80,
+            'IpRanges': [
+                {'CidrIp': '0.0.0.0/0'}
+            ]
+        }
+    ]
+)
+
+response = ec2.create_security_group(
+    GroupName='web-sg',
+    Description='Web Security Group',
+    VpcId='vpc-123456'
+)
+
+sg_id = response['GroupId']
+
+2.
+
+images = ec2.describe_images(
+    Owners=['self']
+)
+
+for img in images['Images']:
+    print(img['ImageId'])
+
+response = ec2.create_image(
+    InstanceId='i-123456789',
+    Name='production-backup'
+)
+
+print(response['ImageId'])
+
+1.
+
+ec2.terminate_instances(
+    InstanceIds=['i-123456789']
+)
+ec2.start_instances(
+    InstanceIds=['i-123456789']
+)
+
+
+import boto3
+
+ec2 = boto3.client(
+    'ec2',
+    region_name='us-east-1'
+)
+
+response = ec2.run_instances(
+    ImageId='ami-123456789',
+    InstanceType='t2.micro',
+    MinCount=1,
+    MaxCount=1,
+    KeyName='my-key',
+    SecurityGroupIds=[
+        'sg-123456'
+    ]
+)
+
+instance_id = response['Instances'][0]['InstanceId']
+
+print("Created:", instance_id)
+
+
+
+
+
+
+    │
+    ▼
+ Ansible / Chef / Puppet
+
+When discussing EC2 in interviews, cover:
+
+Launching and managing instances
+Creating and using AMIs
+Configuring Security Groups
+Monitoring with CloudWatch
+Automating with Python (Boto3)
+Infrastructure as Code with Terraform
+Containerization with Docker
+Orchestration with Kubernetes
+CI/CD using Jenkins
+Configuration management using Ansible, Chef, and Puppet
+Tracking resources using SQL databases

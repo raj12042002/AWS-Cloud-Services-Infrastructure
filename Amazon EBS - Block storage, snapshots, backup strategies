@@ -1,1 +1,2012 @@
 
+// Amazon EBS EC2 servers ke liye high-performance block 
+storage provide karta hai jo production applications aur business-critical workloads ko support karta hai.
+
+
+>> import boto3
+
+ec2 = boto3.client("ec2")
+
+volumes = ec2.describe_volumes()
+
+for volume in volumes["Volumes"]:
+    print(
+        volume["VolumeId"],
+        volume["Size"],
+        "GB"
+    )
+import boto3
+
+ec2 = boto3.client("ec2")
+
+ec2.create_snapshot(
+    VolumeId="vol-123456",
+    Description="Daily Backup"
+)
+
+print("Snapshot Created")
+
+snapshot_df = spark.read.csv(
+    "s3://backup-reports/snapshots.csv",
+    header=True
+)
+
+snapshot_df.show()
+const AWS = require('aws-sdk');
+
+const ec2 = new AWS.EC2();
+
+ec2.describeVolumes({}, function(err, data) {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log(data.Volumes);
+    }
+});
+
+from java.lang import System
+
+volume_id = "vol-123456"
+
+print("Monitoring Volume:", volume_id)
+
+System.out.println("Jython Running")
+
+<project name="EBSBackup">
+
+    <target name="backup">
+
+        <echo>
+            Starting EBS Backup Process
+        </echo>
+
+    </target>
+
+</project> // apache ant build script
+
+ant backup 
+
+import boto3
+
+cloudwatch = boto3.client("cloudwatch")
+
+response = cloudwatch.list_metrics(
+    Namespace="AWS/EBS"
+)
+
+print(response)
+
+---------------------------------------------------------------------------------
+Production workloads ke liye Amazon EBS storage manage kiya.
+Automated snapshot-based backup strategy implement ki.
+Disaster recovery ke liye snapshot restoration process design kiya.
+gp3 volumes use karke storage performance optimize ki.
+CloudWatch ke through EBS monitoring aur alerting implement ki.
+
+-----------------------------------------------------------------------------------------
+
+Amazon EC2 - Instance management, AMIs, security groups, monitoring
+Amazon VPC - Network configuration, subnets, routing, security
+Amazon S3 - Object storage, versioning, lifecycle policies, static website hosting
+
+import boto3
+ec2 = boto3.client('ec2') // 
+
+>> EC2 CLIENT Create>> s3 bucket create << vpc create << iam user create <<
+ import  boto3
+ec2 = boto3.client('ec2')
+
+ec2.run_instances()  // 
+
+
+# AWS MCQs (Python + SQL + Shell Scripting) – Hinglish
+
+### Topics:
+
+* Amazon EC2
+* Amazon VPC
+* Amazon S3
+
+---
+
+# Amazon EC2 MCQs
+
+### 1. Python me EC2 client create karne ke liye kaunsa code use hota hai?
+
+```python
+import boto3
+ec2 = boto3.client('ec2')
+```
+
+A. EC2 Client Create
+B. S3 Bucket Create
+C. VPC Create
+D. IAM User Create
+
+✅ Answer: A
+
+---
+
+### 2. EC2 instance launch karne ke liye kaunsa method use hota hai?
+
+```python
+ec2.run_instances()
+```
+
+A. create_instance()
+B. launch_instance()
+C. run_instances()
+D. start_instance()
+
+✅ Answer: C
+
+---
+
+### 3. Shell script me EC2 list karne ke liye kaunsi command hai?
+
+```bash
+aws ec2 describe-instances
+```
+
+A. describe-instances
+B. list-servers
+C. show-instance
+D. get-vm
+
+✅ Answer: A
+
+---
+
+### 4. EC2 stop karne ke liye?
+
+```python
+ec2.stop_instances(
+    InstanceIds=['i-123']
+)
+```
+
+A. terminate_instances()
+B. stop_instances()
+C. reboot_instances()
+D. delete_instance()
+
+✅ Answer: B
+
+---
+
+### 5. EC2 permanently delete karne ke liye?
+
+```python
+ec2.terminate_instances(
+    InstanceIds=['i-123']
+)
+```
+
+A. stop_instances()
+B. delete_instances()
+C. terminate_instances()
+D. remove_instance()
+
+✅ Answer: C
+
+---
+
+### 6. Security Group kya hota hai?
+
+A. Storage
+B. Firewall
+C. Database
+D. DNS
+
+✅ Answer: B
+
+---
+
+### 7. SSH port kaunsa hai?
+
+A. 21
+B. 22
+C. 80
+D. 443
+
+✅ Answer: B
+
+---
+
+### 8. HTTP port?
+
+A. 22
+B. 80
+C. 443
+D. 3306
+
+✅ Answer: B
+
+---
+
+### 9. HTTPS port?
+
+A. 80
+B. 22
+C. 443
+D. 8080
+
+✅ Answer: C
+
+---
+
+### 10. CloudWatch kisliye use hota hai?
+
+A. Monitoring
+B. Storage
+C. DNS
+D. IAM
+
+✅ Answer: A
+
+---
+
+# Python EC2 Monitoring MCQ
+
+### 11. Ye code kya karega?
+
+```python
+cloudwatch = boto3.client(
+    'cloudwatch'
+)
+```
+
+A. EC2 Launch
+B. Monitoring Access
+C. Bucket Create
+D. IAM Create
+
+✅ Answer: B
+
+---
+
+### 12. CPU metric ka naam kya hai?
+
+A. CPUPerformance
+B. CPUUsage
+C. CPUUtilization
+D. CPUAverage
+
+✅ Answer: C
+
+---
+
+# SQL EC2 MCQ
+
+### 13. Active servers dekhne ke liye query?
+
+```sql
+SELECT *
+FROM ec2_inventory
+WHERE state='running';
+```
+
+A. Running Instances
+B. Deleted Instances
+C. Buckets
+D. Volumes
+
+✅ Answer: A
+
+---
+
+### 14. Kitne EC2 running hain?
+
+```sql
+SELECT COUNT(*)
+FROM ec2_inventory
+WHERE state='running';
+```
+
+A. Count Running Servers
+B. Delete Servers
+C. Create Server
+D. Backup Server
+
+✅ Answer: A
+
+---
+
+# Amazon VPC MCQs
+
+### 15. VPC ka full form?
+
+A. Virtual Private Cloud
+B. Virtual Public Cloud
+C. Virtual Protected Cloud
+D. Virtual Process Cloud
+
+✅ Answer: A
+
+---
+
+### 16. Python me VPC create karne ka method?
+
+```python
+ec2.create_vpc(
+    CidrBlock='10.0.0.0/16'
+)
+```
+
+A. create_network()
+B. create_vpc()
+C. create_subnet()
+D. create_route()
+
+✅ Answer: B
+
+---
+
+### 17. CIDR Block kya define karta hai?
+
+A. CPU
+B. Storage
+C. Network Range
+D. User
+
+✅ Answer: C
+
+---
+
+### 18. Public subnet me usually kya hota hai?
+
+A. Database
+B. Application Server
+C. Load Balancer
+D. Backup
+
+✅ Answer: C
+
+---
+
+### 19. Private subnet me kya rakha jata hai?
+
+A. Database
+B. Public Website
+C. DNS Server
+D. CloudFront
+
+✅ Answer: A
+
+---
+
+### 20. Internet access ke liye kya zaroori hai?
+
+A. Security Group
+B. Internet Gateway
+C. Snapshot
+D. AMI
+
+✅ Answer: B
+
+---
+
+### 21. Route Table kisliye use hoti hai?
+
+A. Storage
+B. Routing Traffic
+C. IAM
+D. Monitoring
+
+✅ Answer: B
+
+---
+
+### 22. Shell command VPC list karne ke liye?
+
+```bash
+aws ec2 describe-vpcs
+```
+
+A. describe-vpcs
+B. list-vpcs
+C. show-vpcs
+D. get-vpc
+
+✅ Answer: A
+
+---
+
+### 23. Subnet create karne ke liye?
+
+```python
+ec2.create_subnet()
+```
+
+A. create_subnet()
+B. make_subnet()
+C. add_subnet()
+D. subnet_create()
+
+✅ Answer: A
+
+---
+
+### 24. NACL hota hai?
+
+A. Storage Layer
+B. Subnet Firewall
+C. Database
+D. DNS
+
+✅ Answer: B
+
+---
+
+### 25. Security Group kis level par lagta hai?
+
+A. Subnet
+B. Instance
+C. Route Table
+D. VPC
+
+✅ Answer: B
+
+---
+
+# Amazon S3 MCQs
+
+### 26. S3 kis type ki storage hai?
+
+A. Block Storage
+B. File Storage
+C. Object Storage
+D. SAN
+
+✅ Answer: C
+
+---
+
+### 27. Bucket create karne ke liye?
+
+```python
+s3.create_bucket(
+    Bucket='mybucket'
+)
+```
+
+A. create_bucket()
+B. add_bucket()
+C. make_bucket()
+D. new_bucket()
+
+✅ Answer: A
+
+---
+
+### 28. File upload method?
+
+```python
+s3.upload_file()
+```
+
+A. upload_data()
+B. upload_file()
+C. put_data()
+D. copy_file()
+
+✅ Answer: B
+
+---
+
+### 29. S3 versioning ka fayda?
+
+A. Faster CPU
+B. File History
+C. Better RAM
+D. More Users
+
+✅ Answer: B
+
+---
+
+### 30. Versioning enable code?
+
+```python
+s3.put_bucket_versioning()
+```
+
+A. enable_version()
+B. create_version()
+C. put_bucket_versioning()
+D. bucket_version()
+
+✅ Answer: C
+
+---
+
+### 31. Lifecycle policy kisliye?
+
+A. Auto Archive/Delete
+B. CPU Monitoring
+C. DNS
+D. Security
+
+✅ Answer: A
+
+---
+
+### 32. Glacier use hota hai?
+
+A. Database
+B. Archive Storage
+C. Compute
+D. DNS
+
+✅ Answer: B
+
+---
+
+### 33. Static website hosting kis service se?
+
+A. EC2
+B. RDS
+C. S3
+D. IAM
+
+✅ Answer: C
+
+---
+
+### 34. Shell command bucket list karne ke liye?
+
+```bash
+aws s3 ls
+```
+
+A. s3 ls
+B. s3 list
+C. bucket list
+D. list bucket
+
+✅ Answer: A
+
+---
+
+### 35. File copy to S3?
+
+```bash
+aws s3 cp file.txt s3://bucket/
+```
+
+A. copy file to bucket
+B. delete bucket
+C. create bucket
+D. list bucket
+
+✅ Answer: A
+
+---
+
+### 36. SQL me S3 inventory query?
+
+```sql
+SELECT *
+FROM s3_inventory;
+```
+
+A. Read Inventory
+B. Delete Inventory
+C. Create Bucket
+D. Upload Object
+
+✅ Answer: A
+
+---
+
+### 37. Total objects count?
+
+```sql
+SELECT COUNT(*)
+FROM s3_inventory;
+```
+
+A. Count Objects
+B. Create Objects
+C. Delete Objects
+D. Archive Objects
+
+✅ Answer: A
+
+---
+
+### 38. Large files ke liye kya use hota hai?
+
+A. Multipart Upload
+B. DNS Upload
+C. Snapshot Upload
+D. IAM Upload
+
+✅ Answer: A
+
+---
+
+### 39. S3 bucket name hona chahiye?
+
+A. Region Specific
+B. Globally Unique
+C. User Specific
+D. Account Specific
+
+✅ Answer: B
+
+---
+
+### 40. S3 me data kis format me store hota hai?
+
+A. Row
+B. Column
+C. Object
+D. Block
+
+✅ Answer: C
+
+---
+
+# Shell Scripting MCQs
+
+### 41. Bucket existence check?
+
+```bash
+aws s3 ls s3://mybucket
+```
+
+Purpose?
+
+A. Check Bucket Exists
+B. Delete Bucket
+C. Create Bucket
+D. Versioning
+
+✅ Answer: A
+
+---
+
+### 42. EC2 status check?
+
+```bash
+aws ec2 describe-instance-status
+```
+
+A. Server Health
+B. Storage Health
+C. Bucket Health
+D. DNS Health
+
+✅ Answer: A
+
+---
+
+### 43. VPC list script?
+
+```bash
+for vpc in $(aws ec2 describe-vpcs)
+```
+
+Purpose?
+
+A. Loop Through VPCs
+B. Create VPC
+C. Delete VPC
+D. Monitor CPU
+
+✅ Answer: A
+
+---
+
+### 44. Linux command for network?
+
+```bash
+ip addr
+```
+
+A. Network Information
+B. Storage Information
+C. CPU Information
+D. DNS Information
+
+✅ Answer: A
+
+---
+
+### 45. Linux command for disk usage?
+
+```bash
+df -h
+```
+
+A. Disk Usage
+B. CPU Usage
+C. RAM Usage
+D. Network Usage
+
+✅ Answer: A
+
+---
+
+# Scenario-Based MCQs
+
+### 46. Company wants file version history. Which S3 feature?
+
+A. IAM
+B. Versioning
+C. Route53
+D. AMI
+
+✅ Answer: B
+
+---
+
+### 47. Company wants private database network.
+
+A. Public Subnet
+B. Private Subnet
+C. Internet Gateway
+D. CloudFront
+
+✅ Answer: B
+
+---
+
+### 48. Company wants VM template reuse.
+
+A. AMI
+B. Snapshot
+C. Route53
+D. VPC
+
+✅ Answer: A
+
+---
+
+### 49. Company wants monitor EC2 CPU > 80%.
+
+A. CloudWatch Alarm
+B. IAM Policy
+C. Route53
+D. S3 Versioning
+
+✅ Answer: A
+
+---
+
+### 50. Company wants host static HTML website cheaply.
+
+A. EC2
+B. Lambda
+C. S3 Static Website Hosting
+D. RDS
+
+✅ Answer: C
+
+These 50 MCQs cover EC2, VPC, S3 with practical Python, SQL, and Shell scripting concepts commonly asked in AWS Cloud, DevOps, NOC, System Administrator, and Data Engineer interviews.
+
+
+import boto3
+mc2 = boto3.client('mc2')
+response = mc2.decribe_instance()
+
+for reservation in respone['Reservations']:
+   for instance in reservation['Instances']:
+       print(
+             instance['InstanceId'],
+instance['InstanceType'],
+instance['State']['Name']
+)
+
+CREATE TABLE ec2_inventory (
+instatnce_id VARCHAR(50),
+instance_type VARCHAR(50),
+state VARCHAR(20)
+);
+
+INSERT INTO ec2_inventory
+VALUES
+('i-123456', 't3.micro', 'running');
+
+SELECT* FROM ec2_inventory
+WHERE state='running';
+
+import boto3
+
+ec2 = boto3.client('ec2')
+
+ec2.stop_instances(
+    InstanceIds=['i-123456']
+)
+
+print("Instance stopped")
+
+CREATE TABLE ec2_actions (
+    instance_id VARCHAR(50),
+    action VARCHAR(20),
+    action_time TIMESTAMP
+);
+
+import boto3
+
+ec2 = boto3.client('ec2')
+
+groups = ec2.describe_security_groups()
+
+for sg in groups['SecurityGroups']:
+    print(
+        sg['GroupName'],
+        sg['GroupId']
+    )
+CREATE TABLE security_groups (
+    group_id VARCHAR(50),
+    group_name VARCHAR(100)
+);
+import boto3
+
+cw = boto3.client('cloudwatch')
+
+metrics = cw.list_metrics(
+    Namespace='AWS/EC2'
+)
+
+print(metrics)
+
+CREATE TABLE ec2_metrics (
+    instance_id VARCHAR(50),
+    cpu_utilization DECIMAL(5,2),
+    metric_time TIMESTAMP
+);
+
+SELECT *
+FROM ec2_metrics
+ORDER BY cpu_utilization DESC;
+
+import boto3
+
+ec2 = boto3.client('ec2')
+
+response = ec2.create_vpc(
+    CidrBlock='10.0.0.0/16'
+)
+
+print(response['Vpc']['VpcId'])
+
+CREATE TABLE vpc_inventory (
+    vpc_id VARCHAR(50),
+    cidr VARCHAR(50)
+);
+response = ec2.create_subnet(
+    VpcId='vpc-123',
+    CidrBlock='10.0.1.0/24'
+)
+
+print(response)
+
+CREATE TABLE subnet_inventory (
+    subnet_id VARCHAR(50),
+    cidr VARCHAR(50)
+);
+routes = ec2.describe_route_tables()
+
+print(routes)
+
+CREATE TABLE route_tables (
+    route_table_id VARCHAR(50),
+    destination VARCHAR(50)
+);
+
+import boto3
+
+s3 = boto3.client('s3')
+
+s3.create_bucket(
+    Bucket='company-backup-bucket'
+)
+CREATE TABLE bucket_inventory (
+    bucket_name VARCHAR(100),
+    creation_date TIMESTAMP
+);
+s3.upload_file(
+    'report.csv',
+    'company-backup-bucket',
+    'report.csv'
+)
+CREATE TABLE uploads (
+    file_name VARCHAR(100),
+    upload_time TIMESTAMP
+);
+s3.put_bucket_versioning(
+    Bucket='company-backup-bucket',
+    VersioningConfiguration={
+        'Status': 'Enabled'
+    }
+)
+CREATE TABLE file_versions (
+    file_name VARCHAR(100),
+    version_id VARCHAR(100)
+);
+s3.put_bucket_lifecycle_configuration(
+    Bucket='company-backup-bucket',
+    LifecycleConfiguration={
+        'Rules': [
+            {
+                'Status': 'Enabled',
+                'Prefix': '',
+                'Expiration': {
+                    'Days': 90
+                },
+                'ID': 'delete-old-files'
+            }
+        ]
+    }
+)
+
+CREATE TABLE lifecycle_policies (
+    bucket_name VARCHAR(100),
+    retention_days INT
+);
+s3.put_bucket_website(
+    Bucket='my-website',
+    WebsiteConfiguration={
+        'IndexDocument': {
+            'Suffix': 'index.html'
+        }
+    }
+)
+
+CREATE TABLE websites (
+    bucket_name VARCHAR(100),
+    website_url VARCHAR(255)
+);
+
+SELECT log_message
+FROM cloudwatch_logs
+WHERE severity='ERROR';
+
+logs = """
+EC2 CPU utilization exceeded 95%
+Disk usage reached 92%
+"""
+
+prompt = f"""
+Summarize these cloud incidents:
+{logs}
+"""
+
+from transformers import GPT2LMHeadModel
+
+model = GPT2LMHeadModel.from_pretrained(
+    "gpt2"
+)
+
+print("Model Loaded")
+
+
+sentence = ["I","love","AI"]
+
+next_word = "because"
+
+print(next_word)
+
+Internet Data
+      ↓
+Pretraining
+      ↓
+Transformer
+      ↓
+Fine Tuning
+      ↓
+RLHF
+      ↓
+ChatGPT
+machine learning
+
+from transformers import pipeline
+
+classifier = pipeline(
+    "sentiment-analysis"
+)
+
+result = classifier(
+    "I love AI"
+)
+
+print(result)
+
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+
+tokens = tokenizer("Hello World")
+
+print(tokens)
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+
+# demand prediction
+
+import torch
+
+noise = torch.randn(1,100)
+
+generator = torch.nn.Linear(100,784)
+
+fake_image = generator(noise)
+
+print(fake_image.shape)
+
+import torch
+import torch.nn as nn
+
+encoder = nn.Linear(784, 20)
+decoder = nn.Linear(20, 784)
+
+x = torch.randn(1, 784)
+
+z = encoder(x)
+
+reconstructed = decoder(z)
+
+print(reconstructed.shape)
+
+
+
+import boto3
+
+s3 = boto3.client('s3')
+
+s3.upload_file(
+    'sales_data.csv',
+    'company-data',
+    'sales_data.csv'
+)
+
+print("Upload Completed")
+
+
+import boto3
+
+s3 = boto3.client('s3')
+
+s3.download_file(
+    'company-data',
+    'sales_data.csv',
+    'downloaded_sales_data.csv'
+)
+
+print("Download Completed")
+
+
+data_gb = 500
+
+speed_mbps = 100
+
+data_mb = data_gb * 1024
+
+speed_mbs = speed_mbps / 8
+
+time_seconds = data_mb / speed_mbs
+
+time_hours = time_seconds / 3600
+
+print("Upload Time:", round(time_hours,2), "Hours")
+
+
+const {
+  S3Client,
+  PutObjectCommand
+} = require("@aws-sdk/client-s3");
+
+const fs = require("fs");
+
+const client = new S3Client({ region: "ap-south-1" });
+
+async function uploadFile() {
+
+    const command =
+        new PutObjectCommand({
+
+            Bucket: "company-data",
+
+            Key: "sales_data.csv",
+
+            Body: fs.createReadStream(
+                "sales_data.csv"
+            )
+        });
+
+    await client.send(command);
+
+    console.log("Upload Success");
+}
+
+uploadFile();
+const {
+  S3Client,
+  GetObjectCommand
+} = require("@aws-sdk/client-s3");
+
+const client =
+ new S3Client({region:"ap-south-1"});
+
+async function downloadFile() {
+
+   const command =
+    new GetObjectCommand({
+
+      Bucket:"company-data",
+
+      Key:"sales_data.csv"
+   });
+
+   const response =
+      await client.send(command);
+
+   console.log(response);
+}
+
+downloadFile();
+
+CREATE TABLE s3_files
+(
+    file_id INT,
+    file_name VARCHAR(200),
+    file_size_gb DECIMAL(10,2),
+    upload_date DATE
+); INSERT INTO s3_files
+VALUES
+(
+1,
+'sales_data.csv',
+500,
+CURRENT_DATE
+);
+
+SELECT
+SUM(file_size_gb) AS total_storage
+FROM s3_files;
+
+SELECT
+SUM(file_size_gb) * 0.023
+AS monthly_cost_usd
+FROM s3_files;
+
+import boto3
+
+s3 = boto3.client(
+    "s3",
+    region_name="ap-south-1"
+)
+
+bucket_name = "company-data-lake"
+
+lifecycle_configuration = {
+
+    "Rules": [
+
+        {
+
+            "ID": "MoveToGlacierAfter30Days",
+
+            "Status": "Enabled",
+
+            "Filter": {
+                "Prefix": ""
+            },
+
+            "Transitions": [
+
+                {
+                    "Days": 30,
+                    "StorageClass": "GLACIER"
+                }
+
+            ],
+
+            "Expiration": {
+
+                "Days": 3650
+
+            }
+
+        }
+
+    ]
+
+}
+
+response = s3.put_bucket_lifecycle_configuration(
+
+    Bucket=bucket_name,
+
+    LifecycleConfiguration=lifecycle_configuration
+
+)
+
+print("Lifecycle Policy Applied")
+
+print(response)
+
+import boto3
+
+s3 = boto3.client("s3")
+
+bucket_name = "company-data-lake"
+
+response = s3.get_bucket_lifecycle_configuration(
+
+    Bucket=bucket_name
+
+)
+
+for rule in response["Rules"]:
+
+    print("Rule ID:", rule["ID"])
+
+    print("Status:", rule["Status"])
+
+    print("Transitions:")
+
+    for transition in rule["Transitions"]:
+
+        print(
+            transition["Days"],
+            transition["StorageClass"]
+        )
+storage_size_gb = 500
+
+s3_standard_cost = 0.023
+
+glacier_cost = 0.004
+
+monthly_standard = (
+    storage_size_gb *
+    s3_standard_cost
+)
+
+monthly_glacier = (
+    storage_size_gb *
+    glacier_cost
+)
+
+monthly_savings = (
+    monthly_standard -
+    monthly_glacier
+)
+
+yearly_savings = (
+    monthly_savings * 12
+)
+
+print(
+    "Monthly Standard Cost:",
+    round(monthly_standard,2)
+)
+
+print(
+    "Monthly Glacier Cost:",
+    round(monthly_glacier,2)
+)
+
+print(
+    "Monthly Savings:",
+    round(monthly_savings,2)
+)
+
+print(
+    "Yearly Savings:",
+    round(yearly_savings,2)
+)
+
+import pandas as pd
+
+data = {
+
+    "Storage_Class":[
+
+        "S3 Standard",
+        "Glacier"
+
+    ],
+
+    "Size_GB":[
+
+        500,
+        500
+
+    ],
+
+    "Cost_Per_GB":[
+
+        0.023,
+        0.004
+
+    ]
+
+}
+
+df = pd.DataFrame(data)
+
+df["Monthly_Cost"] = (
+
+    df["Size_GB"] *
+    df["Cost_Per_GB"]
+
+)
+
+df["Yearly_Cost"] = (
+
+    df["Monthly_Cost"] * 12
+
+)
+
+print(df)
+
+const {
+    S3Client,
+    PutBucketLifecycleConfigurationCommand
+} = require("@aws-sdk/client-s3");
+
+const client = new S3Client({
+
+    region: "ap-south-1"
+
+});
+
+const params = {
+
+    Bucket: "company-data-lake",
+
+    LifecycleConfiguration: {
+
+        Rules: [
+
+            {
+
+                ID: "MoveToGlacierAfter30Days",
+
+                Status: "Enabled",
+
+                Filter: {
+
+                    Prefix: ""
+
+                },
+
+                Transitions: [
+
+                    {
+
+                        Days: 30,
+
+                        StorageClass: "GLACIER"
+
+                    }
+
+                ]
+
+            }
+
+        ]
+
+    }
+
+};
+
+async function applyPolicy() {
+
+    try {
+
+        const command =
+            new PutBucketLifecycleConfigurationCommand(
+                params
+            );
+
+        const result =
+            await client.send(command);
+
+        console.log(
+            "Lifecycle Policy Applied"
+        );
+
+        console.log(result);
+
+    } catch(error) {
+
+        console.log(error);
+
+    }
+
+}
+
+applyPolicy();
+
+
+const storageGB = 500;
+
+const standardPrice = 0.023;
+
+const glacierPrice = 0.004;
+
+const standardCost =
+
+    storageGB *
+    standardPrice;
+
+const glacierCost =
+
+    storageGB *
+    glacierPrice;
+
+const monthlySavings =
+
+    standardCost -
+    glacierCost;
+
+const yearlySavings =
+
+    monthlySavings * 12;
+
+console.log(
+    "Standard:",
+    standardCost
+);
+
+console.log(
+    "Glacier:",
+    glacierCost
+);
+
+console.log(
+    "Monthly Savings:",
+    monthlySavings
+);
+
+console.log(
+    "Yearly Savings:",
+    yearlySavings
+);
+
+const report = [
+
+    {
+
+        storageClass:
+            "S3 Standard",
+
+        sizeGB:
+            500,
+
+        costPerGB:
+            0.023
+
+    },
+
+    {
+
+        storageClass:
+            "Glacier",
+
+        sizeGB:
+            500,
+
+        costPerGB:
+            0.004
+
+    }
+
+];
+
+report.forEach(item => {
+
+    const monthlyCost =
+
+        item.sizeGB *
+        item.costPerGB;
+
+    const yearlyCost =
+
+        monthlyCost * 12;
+
+    console.log({
+
+        storageClass:
+            item.storageClass,
+
+        monthlyCost,
+
+        yearlyCost
+
+    });
+
+});
+CREATE TABLE s3_lifecycle_policy
+(
+    policy_id INT PRIMARY KEY,
+
+    bucket_name VARCHAR(200),
+
+    storage_class VARCHAR(100),
+
+    transition_days INT,
+
+    expiration_days INT,
+
+    policy_status VARCHAR(50),
+
+    created_date DATE
+);
+INSERT INTO s3_lifecycle_policy
+(
+    policy_id,
+    bucket_name,
+    storage_class,
+    transition_days,
+    expiration_days,
+    policy_status,
+    created_date
+)
+VALUES
+(
+    1,
+    'company-data-lake',
+    'GLACIER',
+    30,
+    3650,
+    'ENABLED',
+    CURRENT_DATE
+);
+
+CREATE TABLE s3_storage_inventory
+(
+    file_id BIGINT,
+
+    file_name VARCHAR(500),
+
+    file_size_gb DECIMAL(18,2),
+
+    storage_class VARCHAR(100),
+
+    upload_date DATE
+);
+
+SELECT
+
+    storage_class,
+
+    SUM(file_size_gb) AS total_storage,
+
+    CASE
+
+        WHEN storage_class =
+             'STANDARD'
+
+        THEN
+
+            SUM(file_size_gb) *
+            0.023
+
+        WHEN storage_class =
+             'GLACIER'
+
+        THEN
+
+            SUM(file_size_gb) *
+            0.004
+
+    END AS monthly_cost
+
+FROM s3_storage_inventory
+
+GROUP BY storage_class;
+
+WITH standard_cost AS
+(
+    SELECT
+
+        SUM(file_size_gb) *
+        0.023 AS standard_price
+
+    FROM s3_storage_inventory
+
+    WHERE storage_class =
+          'STANDARD'
+),
+
+glacier_cost AS
+(
+    SELECT
+
+        SUM(file_size_gb) *
+        0.004 AS glacier_price
+
+    FROM s3_storage_inventory
+
+    WHERE storage_class =
+          'GLACIER'
+)
+
+SELECT
+
+    standard_price,
+
+    glacier_price,
+
+    (
+        standard_price -
+        glacier_price
+    ) AS monthly_savings,
+
+    (
+        standard_price -
+        glacier_price
+    ) * 12 AS yearly_savings
+
+FROM standard_cost,
+     glacier_cost;
+
+SELECT
+
+    bucket_name,
+
+    COUNT(*) AS total_files,
+
+    SUM(file_size_gb) AS total_storage,
+
+    ROUND(
+        SUM(file_size_gb) * 0.023,
+        2
+    ) AS standard_cost,
+
+    ROUND(
+        SUM(file_size_gb) * 0.004,
+        2
+    ) AS glacier_cost,
+
+    ROUND(
+        (
+            SUM(file_size_gb) * 0.023
+        ) -
+        (
+            SUM(file_size_gb) * 0.004
+        ),
+        2
+    ) AS monthly_savings
+
+FROM s3_storage_inventory
+
+GROUP BY bucket_name;-----------------------------------------------------------
+
+
+Source Bucket (Mumbai)
+        |
+        v
+Cross Region Replication
+        |
+        v
+Destination Bucket (Singapore)
+
+S3 Standard = $0.023/GB
+Replication Transfer = $0.02/GB
+
+DATA_GB = 1024
+
+SOURCE_PRICE = 0.023
+
+DESTINATION_PRICE = 0.023
+
+TRANSFER_PRICE = 0.02
+
+source_cost = (
+    DATA_GB *
+    SOURCE_PRICE
+)
+
+destination_cost = (
+    DATA_GB *
+    DESTINATION_PRICE
+)
+
+transfer_cost = (
+    DATA_GB *
+    TRANSFER_PRICE
+)
+
+monthly_cost = (
+    source_cost +
+    destination_cost +
+    transfer_cost
+)
+
+print("Source Cost =", source_cost)
+
+print("Destination Cost =", destination_cost)
+
+print("Transfer Cost =", transfer_cost)
+
+print("Total Monthly Cost =", monthly_cost)
+
+
+Source Cost = 23.552
+Destination Cost = 23.552
+Transfer Cost = 20.48
+Total Monthly Cost = 67.584
+
+import boto3
+
+s3 = boto3.client("s3")
+
+replication = {
+
+    "Role":
+    "arn:aws:iam::123456789012:role/s3-replication-role",
+
+    "Rules": [
+
+        {
+
+            "Status": "Enabled",
+
+            "Priority": 1,
+
+            "DeleteMarkerReplication": {
+
+                "Status": "Disabled"
+
+            },
+
+            "Filter": {},
+
+            "Destination": {
+
+                "Bucket":
+                "arn:aws:s3:::backup-singapore"
+
+            }
+
+        }
+
+    ]
+
+}
+
+response = s3.put_bucket_replication(
+
+    Bucket="source-mumbai",
+
+    ReplicationConfiguration=replication
+
+)
+
+print(response)
+
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder \
+    .appName("S3Cost") \
+    .getOrCreate()
+
+data = [
+
+    (
+        "Source",
+        1024,
+        0.023
+    ),
+
+    (
+        "Replica",
+        1024,
+        0.023
+    )
+
+]
+
+df = spark.createDataFrame(
+    data,
+    [
+        "location",
+        "storage_gb",
+        "cost_per_gb"
+    ]
+)
+
+cost_df = df.withColumn(
+
+    "monthly_cost",
+
+    df.storage_gb *
+    df.cost_per_gb
+
+)
+
+cost_df.show()
+from pyspark.sql.functions import lit
+
+transfer_df = cost_df.withColumn(
+
+    "transfer_cost",
+
+    lit(1024 * 0.02)
+
+)
+
+transfer_df.show()
+
+DECLARE
+
+    data_gb NUMBER := 1024;
+
+    source_cost NUMBER;
+
+    destination_cost NUMBER;
+
+    transfer_cost NUMBER;
+
+    total_cost NUMBER;
+
+BEGIN
+
+    source_cost :=
+
+        data_gb * 0.023;
+
+    destination_cost :=
+
+        data_gb * 0.023;
+
+    transfer_cost :=
+
+        data_gb * 0.02;
+
+    total_cost :=
+
+        source_cost +
+        destination_cost +
+        transfer_cost;
+
+    DBMS_OUTPUT.PUT_LINE(
+        'Monthly Cost = ' ||
+        total_cost
+    );
+
+END;
+/
+
+CREATE TABLE s3_replication_cost
+(
+    bucket_name VARCHAR2(100),
+
+    region_name VARCHAR2(100),
+
+    storage_gb NUMBER,
+
+    storage_cost NUMBER,
+
+    transfer_cost NUMBER
+);
+INSERT INTO s3_replication_cost
+VALUES
+(
+    'source-mumbai',
+    'ap-south-1',
+    1024,
+    23.55,
+    20.48
+);
+
+SELECT
+
+    SUM(storage_cost) +
+    SUM(transfer_cost)
+    AS monthly_cost
+
+FROM s3_replication_cost;
+
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    double dataGB = 1024;
+
+    double storagePrice = 0.023;
+
+    double transferPrice = 0.02;
+
+    double sourceCost =
+        dataGB * storagePrice;
+
+    double destinationCost =
+        dataGB * storagePrice;
+
+    double transferCost =
+        dataGB * transferPrice;
+
+    double total =
+        sourceCost +
+        destinationCost +
+        transferCost;
+
+    cout << "Monthly Cost = "
+         << total
+         << endl;
+
+    return 0;
+}
+#include <stdio.h>
+
+int main()
+{
+    double dataGB = 1024;
+
+    double storagePrice = 0.023;
+
+    double transferPrice = 0.02;
+
+    double sourceCost =
+        dataGB * storagePrice;
+
+    double destinationCost =
+        dataGB * storagePrice;
+
+    double transferCost =
+        dataGB * transferPrice;
+
+    double total =
+        sourceCost +
+        destinationCost +
+        transferCost;
+
+    printf(
+        "Monthly Cost = %.3f\n",
+        total
+    );
+
+    return 0;
+} // Monthly Cost = 67.584
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

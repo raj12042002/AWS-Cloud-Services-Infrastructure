@@ -1,0 +1,1196 @@
+Architecture
+Internet
+   |
+Route53
+   |
+CloudFront
+   |
+Application Load Balancer
+   |
+Auto Scaling Group
+   |
+EC2 Web Tier
+   |
+RDS MySQL
+   |
+S3 / EFS
+
+# AWS Project 1: Multi-Tier Application Deployment
+
+## Architecture
+
+```text
+Internet
+   |
+Route53
+   |
+CloudFront
+   |
+Application Load Balancer
+   |
+Auto Scaling Group
+   |
+EC2 Web Tier
+   |
+RDS MySQL
+   |
+S3 / EFS
+```
+
+---
+
+# Frontend Website
+
+## index.html
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>E-Commerce App</title>
+</head>
+
+<body>
+
+<h1>Welcome to AWS Project</h1>
+
+<button onclick="loadProducts()">
+
+Load Products
+
+</button>
+
+<div id="result"></div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
+```
+
+---
+
+## app.js
+
+```javascript
+async function loadProducts()
+{
+    const response =
+    await fetch(
+
+      "https://api.company.com/products"
+    );
+
+    const data =
+    await response.json();
+
+    document.getElementById(
+        "result"
+    ).innerHTML =
+    JSON.stringify(
+        data
+    );
+}
+```
+
+---
+
+# Backend Python API
+
+## Flask
+
+```python
+from flask import Flask
+
+from flask import jsonify
+
+app = Flask(__name__)
+
+@app.route("/products")
+
+def products():
+
+    return jsonify(
+
+        [
+
+            {
+                "id":1,
+                "name":"Laptop"
+            },
+
+            {
+                "id":2,
+                "name":"Mobile"
+            }
+
+        ]
+
+    )
+
+if __name__ == "__main__":
+
+    app.run(
+        host="0.0.0.0",
+        port=5000
+    )
+```
+
+---
+
+# Database
+
+```sql
+CREATE TABLE products
+(
+    product_id INT,
+
+    product_name VARCHAR(100),
+
+    price DECIMAL(10,2)
+);
+```
+
+Insert
+
+```sql
+INSERT INTO products
+VALUES
+(
+1,
+'Laptop',
+45000
+);
+```
+
+---
+
+# AWS Project 2: Automated Backup System
+
+## Python EBS Snapshot
+
+```python
+import boto3
+
+ec2 = boto3.client(
+    "ec2"
+)
+
+volumes = [
+
+    "vol-111111",
+    "vol-222222"
+]
+
+for volume in volumes:
+
+    ec2.create_snapshot(
+
+        VolumeId=volume,
+
+        Description=
+        "Daily Backup"
+
+    )
+
+    print(
+        volume,
+        "Snapshot Created"
+    )
+```
+
+---
+
+# Delete Old Snapshots
+
+```python
+import boto3
+
+ec2 = boto3.client("ec2")
+
+snapshots = ec2.describe_snapshots(
+
+    OwnerIds=["self"]
+
+)
+
+for snapshot in snapshots["Snapshots"]:
+
+    print(
+        snapshot["SnapshotId"]
+    )
+```
+
+---
+
+# Monitoring Project
+
+## CloudWatch CPU Alert
+
+```python
+import boto3
+
+cloudwatch =
+boto3.client(
+    "cloudwatch"
+)
+
+cloudwatch.put_metric_alarm(
+
+    AlarmName=
+    "HighCPU",
+
+    MetricName=
+    "CPUUtilization",
+
+    Namespace=
+    "AWS/EC2",
+
+    Statistic=
+    "Average",
+
+    Period=300,
+
+    Threshold=80,
+
+    EvaluationPeriods=2,
+
+    ComparisonOperator=
+    "GreaterThanThreshold"
+)
+```
+
+---
+
+# AWS Project 3: Load Balancer & Auto Scaling
+
+## Launch Template
+
+```python
+import boto3
+
+ec2 =
+boto3.client("ec2")
+
+response =
+ec2.create_launch_template(
+
+    LaunchTemplateName=
+    "web-template",
+
+    LaunchTemplateData={
+
+        "ImageId":
+        "ami-123456",
+
+        "InstanceType":
+        "t3.micro"
+
+    }
+
+)
+```
+
+---
+
+# Auto Scaling Group
+
+```python
+import boto3
+
+asg =
+boto3.client(
+    "autoscaling"
+)
+
+asg.create_auto_scaling_group(
+
+    AutoScalingGroupName=
+    "web-asg",
+
+    MinSize=2,
+
+    DesiredCapacity=2,
+
+    MaxSize=10,
+
+    VPCZoneIdentifier=
+    "subnet1,subnet2"
+)
+```
+
+---
+
+# Scale Out Policy
+
+```python
+asg.put_scaling_policy(
+
+    AutoScalingGroupName=
+    "web-asg",
+
+    PolicyName=
+    "ScaleOut",
+
+    AdjustmentType=
+    "ChangeInCapacity",
+
+    ScalingAdjustment=1
+)
+```
+
+---
+
+# AWS Project 4: S3 Static Website + CloudFront
+
+## Website Structure
+
+```text
+website/
+|
+|-- index.html
+|-- css/
+|-- js/
+|-- images/
+```
+
+---
+
+## index.html
+
+```html
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>
+
+Company Website
+
+</title>
+
+</head>
+
+<body>
+
+<h1>
+
+AWS Static Website
+
+</h1>
+
+</body>
+
+</html>
+```
+
+---
+
+# Upload Website
+
+```python
+import boto3
+
+s3 =
+boto3.client("s3")
+
+s3.upload_file(
+
+    "index.html",
+
+    "company-site",
+
+    "index.html"
+)
+```
+
+---
+
+# Enable Website Hosting
+
+```python
+s3.put_bucket_website(
+
+    Bucket="company-site",
+
+    WebsiteConfiguration={
+
+        "IndexDocument":{
+
+            "Suffix":
+            "index.html"
+
+        }
+
+    }
+)
+```
+
+---
+
+# CloudFront Distribution
+
+```python
+import boto3
+
+cf =
+boto3.client(
+    "cloudfront"
+)
+
+distribution =
+cf.create_distribution(
+
+    DistributionConfig={
+
+        "CallerReference":
+        "website123"
+
+    }
+
+)
+```
+
+---
+
+# Cost Optimization Project
+
+## EC2 Rightsizing
+
+### Python
+
+```python
+import boto3
+
+cloudwatch =
+boto3.client(
+    "cloudwatch"
+)
+
+ec2 =
+boto3.client("ec2")
+
+instances =
+ec2.describe_instances()
+
+for reservation in instances[
+    "Reservations"
+]:
+
+    for instance in reservation[
+        "Instances"
+    ]:
+
+        print(
+
+            instance[
+                "InstanceId"
+            ]
+
+        )
+```
+
+Identify underutilized servers and move:
+
+```text
+t3.large
+      ↓
+t3.micro
+```
+
+---
+
+# S3 Lifecycle Cost Reduction
+
+```python
+import boto3
+
+s3 =
+boto3.client("s3")
+
+s3.put_bucket_lifecycle_configuration(
+
+    Bucket="company-site",
+
+    LifecycleConfiguration={
+
+        "Rules":[
+
+            {
+
+                "ID":"Archive",
+
+                "Status":"Enabled",
+
+                "Transitions":[
+
+                    {
+
+                        "Days":30,
+
+                        "StorageClass":
+                        "GLACIER"
+
+                    }
+
+                ]
+
+            }
+
+        ]
+
+    }
+
+)
+```
+
+---
+
+# JavaScript Cost Dashboard
+
+```javascript
+const resources = [
+
+    {
+        service:"EC2",
+        monthlyCost:120
+    },
+
+    {
+        service:"RDS",
+        monthlyCost:80
+    },
+
+    {
+        service:"S3",
+        monthlyCost:20
+    }
+
+];
+
+let total = 0;
+
+resources.forEach(
+
+    resource => {
+
+        total +=
+        resource.monthlyCost;
+
+    }
+
+);
+
+console.log(
+    "Monthly Cost:",
+    total
+);
+```
+
+---
+
+# Cost Saving Calculator
+
+```javascript
+const before = 500;
+
+const after = 320;
+
+const savings =
+
+    before - after;
+
+const percentage =
+
+    (
+        savings /
+        before
+    ) * 100;
+
+console.log(
+
+    "Savings:",
+
+    savings
+
+);
+
+console.log(
+
+    "Percent:",
+
+    percentage
+
+);
+```
+
+### Example Output
+
+```text
+Monthly Cost Before = $500
+
+Monthly Cost After = $320
+
+Savings = $180
+
+Reduction = 36%
+```
+
+---
+
+# Resume Project Description
+
+### Multi-Tier AWS Application
+
+* Deployed highly available web application using VPC, EC2, ALB, Auto Scaling, RDS, and S3.
+* Implemented CloudFront CDN and Route53 DNS.
+* Automated infrastructure management using Python and AWS SDK.
+
+### Backup & Monitoring
+
+* Developed automated EBS snapshot and monitoring solution.
+* Configured CloudWatch alarms and operational dashboards.
+
+### Cost Optimization
+
+* Implemented EC2 rightsizing, S3 lifecycle policies, and automated cost reporting.
+* Reduced monthly infrastructure cost through storage tiering and utilization analysis.
+
+### Static Website Hosting
+
+* Hosted static website on Amazon S3 with CloudFront CDN.
+* Improved performance, scalability, and global content delivery.
+
+
+
+# Multi-Tier AWS Application (Hinglish + Code)
+
+## Project Overview (Interview Explanation)
+
+### Hinglish
+
+Maine AWS par ek **highly available multi-tier web application** deploy ki thi jisme:
+
+* Amazon VPC use karke secure network banaya.
+* EC2 instances par application host ki.
+* Application Load Balancer (ALB) use karke traffic distribute kiya.
+* Auto Scaling use karke load ke according servers automatically add/remove kiye.
+* Amazon RDS me database host kiya.
+* Amazon S3 me static files aur backups store kiye.
+* CloudFront CDN aur Route 53 use karke fast content delivery aur DNS management implement kiya.
+* Python (Boto3) se infrastructure automation kiya.
+
+---
+
+# 1. Create VPC
+
+### Python
+
+```python
+import boto3
+
+ec2 = boto3.client("ec2")
+
+response = ec2.create_vpc(
+
+    CidrBlock="10.0.0.0/16"
+
+)
+
+print(
+
+    "VPC ID:",
+
+    response["Vpc"]["VpcId"]
+
+)
+```
+
+### Hinglish
+
+Ye code AWS me ek private network create karta hai jiska CIDR block 10.0.0.0/16 hai.
+
+---
+
+# 2. Create Public Subnet
+
+```python
+subnet = ec2.create_subnet(
+
+    VpcId="vpc-123456",
+
+    CidrBlock="10.0.1.0/24"
+
+)
+
+print(subnet)
+```
+
+### Hinglish
+
+Subnet VPC ke andar network ka chhota logical section hota hai.
+
+---
+
+# 3. Launch EC2 Instance
+
+```python
+instance = ec2.run_instances(
+
+    ImageId="ami-123456",
+
+    InstanceType="t3.micro",
+
+    MinCount=1,
+
+    MaxCount=1
+
+)
+
+print(
+
+    instance["Instances"][0]["InstanceId"]
+
+)
+```
+
+### Hinglish
+
+Ye EC2 virtual machine launch karta hai.
+
+---
+
+# 4. Create Security Group
+
+```python
+security_group = ec2.create_security_group(
+
+    GroupName="web-sg",
+
+    Description="Allow HTTP",
+
+    VpcId="vpc-123456"
+
+)
+
+print(security_group)
+```
+
+### Hinglish
+
+Security Group EC2 ka firewall hota hai.
+
+---
+
+# 5. Application Load Balancer
+
+```python
+elb = boto3.client("elbv2")
+
+response = elb.create_load_balancer(
+
+    Name="prod-alb",
+
+    Subnets=[
+
+        "subnet-1",
+
+        "subnet-2"
+
+    ]
+
+)
+
+print(response)
+```
+
+### Hinglish
+
+ALB incoming traffic ko multiple servers me distribute karta hai.
+
+---
+
+# 6. Auto Scaling
+
+```python
+import boto3
+
+asg = boto3.client("autoscaling")
+
+asg.create_auto_scaling_group(
+
+    AutoScalingGroupName="web-asg",
+
+    MinSize=2,
+
+    MaxSize=10,
+
+    DesiredCapacity=2
+
+)
+```
+
+### Hinglish
+
+Traffic badhne par naye EC2 automatically create honge.
+
+---
+
+# Amazon RDS
+
+### Create Database
+
+```python
+import boto3
+
+rds = boto3.client("rds")
+
+rds.create_db_instance(
+
+    DBInstanceIdentifier="prod-db",
+
+    Engine="mysql",
+
+    AllocatedStorage=20,
+
+    DBInstanceClass="db.t3.micro"
+
+)
+```
+
+### Hinglish
+
+Application ka data MySQL RDS me store hota hai.
+
+---
+
+# SQL Example
+
+```sql
+CREATE TABLE customers
+(
+    customer_id INT PRIMARY KEY,
+
+    customer_name VARCHAR(100),
+
+    city VARCHAR(100)
+);
+```
+
+Insert Data
+
+```sql
+INSERT INTO customers
+VALUES
+(
+1,
+'Rahul',
+'Pune'
+);
+```
+
+Fetch Data
+
+```sql
+SELECT *
+FROM customers;
+```
+
+---
+
+# Amazon S3
+
+### Upload File
+
+```python
+import boto3
+
+s3 = boto3.client("s3")
+
+s3.upload_file(
+
+    "report.csv",
+
+    "company-bucket",
+
+    "report.csv"
+
+)
+```
+
+### Hinglish
+
+S3 object storage hai jahan files store ki jaati hain.
+
+---
+
+# Static Website Hosting
+
+## index.html
+
+```html
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>
+
+AWS Website
+
+</title>
+
+</head>
+
+<body>
+
+<h1>
+
+Welcome To AWS
+
+</h1>
+
+</body>
+
+</html>
+```
+
+Upload:
+
+```bash
+aws s3 cp index.html s3://company-site
+```
+
+---
+
+# CloudFront CDN
+
+```python
+import boto3
+
+cf = boto3.client("cloudfront")
+
+distribution = cf.create_distribution(
+
+    DistributionConfig={
+
+        "CallerReference":
+
+        "website001"
+
+    }
+
+)
+```
+
+### Hinglish
+
+CloudFront content ko nearest edge location se serve karta hai.
+
+---
+
+# Route53 DNS
+
+```python
+import boto3
+
+route53 = boto3.client("route53")
+
+response = route53.list_hosted_zones()
+
+print(response)
+```
+
+### Hinglish
+
+Route53 domain name ko IP address se map karta hai.
+
+---
+
+# Backup & Monitoring
+
+## EBS Snapshot
+
+```python
+import boto3
+
+ec2 = boto3.client("ec2")
+
+ec2.create_snapshot(
+
+    VolumeId="vol-123456",
+
+    Description="Daily Backup"
+
+)
+```
+
+### Hinglish
+
+Snapshot EBS volume ka backup hota hai.
+
+---
+
+# CloudWatch Monitoring
+
+```python
+import boto3
+
+cw = boto3.client("cloudwatch")
+
+cw.put_metric_alarm(
+
+    AlarmName="HighCPU",
+
+    MetricName="CPUUtilization",
+
+    Namespace="AWS/EC2",
+
+    Threshold=80,
+
+    EvaluationPeriods=2,
+
+    ComparisonOperator=
+
+    "GreaterThanThreshold"
+
+)
+```
+
+### Hinglish
+
+CPU 80% se upar jane par alert trigger hoga.
+
+---
+
+# Cost Optimization
+
+## EC2 Rightsizing
+
+```python
+instances = ec2.describe_instances()
+
+for reservation in instances["Reservations"]:
+
+    for instance in reservation["Instances"]:
+
+        print(
+
+            instance["InstanceId"],
+
+            instance["InstanceType"]
+
+        )
+```
+
+### Hinglish
+
+Kam CPU usage wale servers ko smaller instance me convert kar sakte hain.
+
+Example:
+
+```text
+t3.large
+     ↓
+t3.micro
+```
+
+---
+
+# S3 Lifecycle Policy
+
+```python
+s3.put_bucket_lifecycle_configuration(
+
+    Bucket="company-bucket",
+
+    LifecycleConfiguration={
+
+        "Rules":[
+
+            {
+
+                "ID":"Archive",
+
+                "Status":"Enabled",
+
+                "Transitions":[
+
+                    {
+
+                        "Days":30,
+
+                        "StorageClass":"GLACIER"
+
+                    }
+
+                ]
+
+            }
+
+        ]
+
+    }
+
+)
+```
+
+### Hinglish
+
+30 days baad files automatically Glacier me move ho jayengi aur storage cost kam ho jayegi.
+
+---
+
+# Automated Cost Report
+
+```python
+services = {
+
+    "EC2":120,
+
+    "RDS":80,
+
+    "S3":20,
+
+    "CloudFront":15
+
+}
+
+total = sum(
+
+    services.values()
+
+)
+
+print(
+
+    "Monthly Cost =",
+
+    total
+
+)
+```
+
+Output:
+
+```text
+Monthly Cost = 235
+```
+
+---
+
+# Interview Summary (Hinglish)
+
+**"Maine AWS par VPC, EC2, ALB, Auto Scaling, RDS aur S3 
+use karke highly available multi-tier application deploy ki. 
+CloudFront aur Route53 implement kiya global content delivery aur 
+DNS management ke liye. Python Boto3 scripts se infrastructure automation kiya. 
+EBS snapshots aur CloudWatch monitoring setup kiya. S3 lifecycle policies aur EC2 
+rightsizing ke through infrastructure cost optimize ki aur overall application ko scalable, 
+secure aur fault-tolerant banaya."**
+
+
+

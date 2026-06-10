@@ -1,0 +1,583 @@
+import boto3
+from botocore.exceptions import ClientError
+
+REGION = "us-east-1"
+
+ec2 = boto3.client(
+    "ec2",
+    region_name=REGION
+)
+
+# ======================================
+# STEP 1: CREATE VPC
+# ======================================
+
+def create_vpc():
+    response = ec2.create_vpc(
+        CidrBlock="10.0.0.0/16"
+    )
+
+    vpc_id = response["Vpc"]["VpcId"]
+
+    ec2.create_tags(
+        Resources=[vpc_id],
+        Tags=[
+            {
+                "Key": "Name",
+                "Value": "Production-VPC"
+            }
+        ]
+    )
+
+    print(f"VPC Created: {vpc_id}")
+    return vpc_id
+
+
+# ======================================
+# STEP 2: CREATE PUBLIC SUBNET
+# ======================================
+
+def create_public_subnet(vpc_id):
+
+    response = ec2.create_subnet(
+        VpcId=vpc_id,
+        CidrBlock="10.0.1.0/24",
+        AvailabilityZone="us-east-1a"
+    )
+
+    subnet_id = response["Subnet"]["SubnetId"]
+
+    print(f"Public Subnet Created: {subnet_id}")
+
+    return subnet_id
+
+
+# ======================================
+# STEP 3: CREATE PRIVATE SUBNET
+# ======================================
+
+def create_private_subnet(vpc_id):
+
+    response = ec2.create_subnet(
+        VpcId=vpc_id,
+        CidrBlock="10.0.2.0/24",
+        AvailabilityZone="us-east-1a"
+    )
+
+    subnet_id = response["Subnet"]["SubnetId"]
+
+    print(f"Private Subnet Created: {subnet_id}")
+
+    return subnet_id
+
+
+# ======================================
+# STEP 4: CREATE INTERNET GATEWAY
+# ======================================
+
+def create_internet_gateway(vpc_id):
+
+    response = ec2.create_internet_gateway()
+
+    igw_id = response["InternetGateway"]["InternetGatewayId"]
+
+    ec2.attach_internet_gateway(
+        InternetGatewayId=igw_id,
+        VpcId=vpc_id
+    )
+
+    print(f"Internet Gateway Created: {igw_id}")
+
+    return igw_id
+
+
+# ======================================
+# STEP 5: CREATE ROUTE TABLE
+# ======================================
+
+def create_route_table(vpc_id):
+
+    response = ec2.create_route_table(
+        VpcId=vpc_id
+    )
+
+    route_table_id = response["RouteTable"]["RouteTableId"]
+
+    print(f"Route Table Created: {route_table_id}")
+
+    return route_table_id
+
+
+# ======================================
+# STEP 6: ADD INTERNET ROUTE
+# ======================================
+
+def add_internet_route(route_table_id, igw_id):
+
+    ec2.create_route(
+        RouteTableId=route_table_id,
+        DestinationCidrBlock="0.0.0.0/0",
+        GatewayId=igw_id
+    )
+
+    print("Internet Route Added")
+
+
+# ======================================
+# STEP 7: ASSOCIATE ROUTE TABLE
+# ======================================
+
+def associate_route_table(
+    route_table_id,
+    subnet_id
+):
+
+    ec2.associate_route_table(
+        RouteTableId=route_table_id,
+        SubnetId=subnet_id
+    )
+
+    print("Route Table Associated")
+
+
+# ======================================
+# STEP 8: CREATE SECURITY GROUP
+# ======================================
+
+def create_security_group(vpc_id):
+
+    response = ec2.create_security_group(
+        GroupName="web-security-group",
+        Description="Allow SSH HTTP HTTPS",
+        VpcId=vpc_id
+    )
+
+    sg_id = response["GroupId"]
+
+    # SSH
+    ec2.authorize_security_group_ingress(
+        GroupId=sg_id,
+        IpPermissions=[
+            {
+                "IpProtocol": "tcp",
+                "FromPort": 22,
+                "ToPort": 22,
+                "IpRanges": [
+                    {"CidrIp": "0.0.0.0/0"}
+                ]
+            }
+        ]
+    )
+
+    # HTTP
+    ec2.authorize_security_group_ingress(
+        GroupId=sg_id,
+        IpPermissions=[
+            {
+                "IpProtocol": "tcp",
+                "FromPort": 80,
+                "ToPort": 80,
+                "IpRanges": [
+                    {"CidrIp": "0.0.0.0/0"}
+                ]
+            }
+        ]
+    )
+
+    # HTTPS
+    ec2.authorize_security_group_ingress(
+        GroupId=sg_id,
+        IpPermissions=[
+            {
+                "IpProtocol": "tcp",
+                "FromPort": 443,
+                "ToPort": 443,
+                "IpRanges": [
+                    {"CidrIp": "0.0.0.0/0"}
+                ]
+            }
+        ]
+    )
+
+    print(f"Security Group Created: {sg_id}")
+
+    return sg_id
+
+
+# ======================================
+# STEP 9: LAUNCH EC2
+# ======================================
+
+def launch_ec2(subnet_id, sg_id):
+
+    response = ec2.run_instances(
+        ImageId="ami-xxxxxxxxxxxx",
+        InstanceType="t2.micro",
+        MinCount=1,
+        MaxCount=1,
+        SecurityGroupIds=[sg_id],
+        SubnetId=subnet_id
+    )
+
+    instance_id = response["Instances"][0]["InstanceId"]
+
+    print(f"EC2 Created: {instance_id}")
+
+    return instance_id
+
+
+# ======================================
+# MAIN
+# ======================================
+
+def main():
+
+    try:
+
+        vpc_id = create_vpc()
+
+        public_subnet = create_public_subnet(vpc_id)
+
+        private_subnet = create_private_subnet(vpc_id)
+
+        igw_id = create_internet_gateway(vpc_id)
+
+        route_table = create_route_table(vpc_id)
+
+        add_internet_route(
+            route_table,
+            igw_id
+        )
+
+        associate_route_table(
+            route_table,
+            public_subnet
+        )
+
+        sg_id = create_security_group(vpc_id)
+
+        launch_ec2(
+            public_subnet,
+            sg_id
+        )
+
+        print("Environment Created Successfully")
+
+    except ClientError as e:
+        print("AWS Error:", e)
+
+
+if __name__ == "__main__":
+    main()
+
+Internet
+    |
+    v
+Internet Gateway
+    |
+    v
+Route Table
+    |
+    v
+Public Subnet (10.0.1.0/24)
+    |
+    v
+EC2 Instance
+
+Private Subnet (10.0.2.0/24)
+    |
+    v
+Database / Internal Servers
+VPC
+├── Public Subnet
+│   ├── Load Balancer
+│   └── Bastion Host
+│
+├── Private App Subnet
+│   └── Application Servers
+│
+└── Private DB Subnet
+    └── RDS Database
+
+Laptop
+ └── Hard Disk (SSD/HDD)
+
+AWS EC2
+ └── EBS Volume
+
+
+EC2 Instance
+      |
+      |
+      ▼
+  EBS Volume
+   100 GB SSD
+
+EC2 Instance
+      |
+      |
+      ▼
+  EBS Volume
+   100 GB SSD
+
+import boto3
+
+ec2 = boto3.client(
+    "ec2",
+    region_name="us-east-1"
+)
+
+aws ec2 describe-volumes
+
+response = ec2.create_volume(
+    AvailabilityZone="us-east-1a",
+    Size=20,
+    VolumeType="gp3"
+)
+
+volume_id = response["VolumeId"]
+
+print(volume_id)
+AvailabilityZone="us-east-1a"
+
+
+ec2.attach_volume(
+    VolumeId=volume_id,
+    InstanceId="i-123456789",
+    Device="/dev/xvdf"
+)
+response = ec2.create_snapshot(
+    VolumeId=volume_id,
+    Description="Daily Backup"
+)
+
+snapshot_id = response["SnapshotId"]
+
+print(snapshot_id)
+
+EBS Volume
+     |
+     ▼
+ Snapshot
+     |
+     ▼
+ Amazon S3 Backend
+
+
+
+snapshots = ec2.describe_snapshots(
+    OwnerIds=["self"]
+)
+
+for s in snapshots["Snapshots"]:
+    print(s["SnapshotId"])
+
+response = ec2.create_volume(
+    SnapshotId=snapshot_id,
+    AvailabilityZone="us-east-1a"
+)
+
+new_volume = response["VolumeId"]
+
+print(new_volume)
+
+Original Volume
+      |
+      ▼
+Deleted
+      |
+      ▼
+Restore Snapshot
+      |
+      ▼
+Create New Volume
+      |
+      ▼
+Attach To EC2
+ec2.delete_snapshot(
+    SnapshotId=snapshot_id
+)
+ec2.delete_volume(
+    VolumeId=volume_id
+)
+
+import boto3
+
+ec2 = boto3.client("ec2")
+
+volumes = ec2.describe_volumes()
+
+for volume in volumes["Volumes"]:
+
+    volume_id = volume["VolumeId"]
+
+    ec2.create_snapshot(
+        VolumeId=volume_id,
+        Description="Automated Backup"
+    )
+
+    print("Snapshot Created:", volume_id)
+Volume 1
+    |
+ Snapshot
+
+Volume 2
+    |
+ Snapshot
+
+Volume 3
+    |
+ Snapshot
+
+VolumeReadOps
+VolumeWriteOps
+VolumeQueueLength
+BurstBalance
+
+cloudwatch = boto3.client("cloudwatch")
+
+metrics = cloudwatch.get_metric_statistics(
+    Namespace="AWS/EBS",
+    MetricName="VolumeReadOps",
+    Dimensions=[
+        {
+            "Name": "VolumeId",
+            "Value": volume_id
+        }
+    ],
+    StartTime=start_time,
+    EndTime=end_time,
+    Period=300,
+    Statistics=["Average"]
+)
+
+Create EBS Volume
+        |
+        ▼
+Attach to EC2
+        |
+        ▼
+Format Disk
+        |
+        ▼
+Mount Disk
+        |
+        ▼
+Store Data
+        |
+        ▼
+Create Snapshot
+        |
+        ▼
+Disaster Happens
+        |
+        ▼
+Restore Snapshot
+        |
+        ▼
+Create New Volume
+        |
+        ▼
+Attach to New EC2
+
+
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName(
+    "EC2Inventory"
+).getOrCreate()
+
+data = [
+    ("i-123", "t2.micro", "running"),
+    ("i-456", "t3.medium", "stopped")
+]
+
+df = spark.createDataFrame(
+    data,
+    ["instance_id","type","state"]
+)
+
+df.show()
+VPC
+|
++--- Public Subnet
+|
++--- Private Subnet
+|
++--- Database Subnet
+
+response = ec2.create_vpc(
+    CidrBlock="10.0.0.0/16"
+)
+
+print(response['Vpc']['VpcId'])
+
+ec2.create_subnet(
+    VpcId=vpc_id,
+    CidrBlock='10.0.1.0/24'
+)
+aws ec2 describe-vpcs
+aws ec2 describe-subnets
+CREATE TABLE vpc_info(
+   vpc_id VARCHAR(50),
+   cidr VARCHAR(50)
+);
+
+data = [
+    ("vpc-123","10.0.0.0/16"),
+    ("vpc-456","172.31.0.0/16")
+]
+
+df = spark.createDataFrame(
+    data,
+    ["vpc_id","cidr"]
+)
+
+df.show()
+
+s3 = boto3.client('s3')
+
+s3.create_bucket(
+    Bucket='my-company-bucket'
+)
+s3.upload_file(
+    'report.csv',
+    'my-company-bucket',
+    'report.csv'
+)
+s3.put_bucket_versioning(
+    Bucket='my-company-bucket',
+    VersioningConfiguration={
+        'Status':'Enabled'
+    }
+)
+aws s3 ls
+aws s3 cp report.csv s3://my-company-bucket
+
+CREATE TABLE s3_files(
+   bucket VARCHAR(100),
+   file_name VARCHAR(200)
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

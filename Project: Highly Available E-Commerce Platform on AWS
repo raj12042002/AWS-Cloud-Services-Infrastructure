@@ -1,0 +1,325 @@
+ARCHITECUTRE
+
+Users
+  |
+Route53
+  |
+CloudFront
+  |
+Application Load Balancer
+  |
+Auto Scaling Group
+  |
+EC2 Instances
+  |
++----------------+
+| Application    |
++----------------+
+  |
+RDS MySQL
+  |
+EFS Shared Files
+  |
+S3 Static Files / Backups
+  |
+CloudWatch Monitoring
+  |
+Lambda Automation
+  |
+IAM Security
+
+import boto3
+
+ec2 = boto3.client('ec2')
+
+response = ec2.create_vpc(
+    CidrBlock='10.0.0.0/16'
+)
+
+print(
+    response['Vpc']['VpcId']
+)  // CREATE VPC
+
+subnet = ec2.create_subnet(
+    VpcId='vpc-id',
+    CidrBlock='10.0.1.0/24'
+)
+
+print(subnet) // create public subnet
+
+sg = ec2.create_security_group(
+    GroupName='web-sg',
+    Description='Web Access',
+    VpcId='vpc-id'
+)
+
+print(sg['GroupId']) // cfreate security group
+
+ec2.authorize_security_group_ingress(
+    GroupId='sg-id',
+
+    IpPermissions=[
+        {
+            'IpProtocol':'tcp',
+            'FromPort':80,
+            'ToPort':80,
+            'IpRanges':[
+                {
+                    'CidrIp':'0.0.0.0/0'
+                }
+            ]
+        }
+    ]
+)
+instance = ec2.run_instances(
+
+    ImageId='ami-id',
+
+    InstanceType='t3.micro',
+
+    MinCount=1,
+
+    MaxCount=1
+)
+
+print(instance)
+
+ec2.create_image(
+
+    InstanceId='i-123456',
+
+    Name='golden-image'
+)
+ec2.create_snapshot(
+
+    VolumeId='vol-123456',
+
+    Description='Daily Backup'
+)
+import boto3
+
+s3 = boto3.client('s3')
+
+s3.create_bucket(
+
+    Bucket='company-backup-bucket'
+) // s3 bucket
+s3.upload_file(
+
+    'sales.csv',
+
+    'company-backup-bucket',
+
+    'sales.csv'
+)
+
+s3.put_bucket_versioning(
+
+    Bucket='company-backup-bucket',
+
+    VersioningConfiguration={
+        'Status':'Enabled'
+    }
+)
+s3.put_bucket_lifecycle_configuration(
+
+    Bucket='company-backup-bucket',
+
+    LifecycleConfiguration={
+        'Rules':[
+            {
+                'ID':'Archive',
+
+                'Status':'Enabled',
+
+                'Transitions':[
+                    {
+                        'Days':30,
+
+                        'StorageClass':
+                        'GLACIER'
+                    }
+                ]
+            }
+        ]
+    }
+)
+efs = boto3.client('efs')
+
+response = efs.create_file_system(
+
+    CreationToken='efs-demo'
+)
+
+print(response)
+
+sudo mount -t efs \
+fs-12345:/ \
+/data
+
+elb = boto3.client(
+    'elbv2'
+)
+
+response = elb.create_load_balancer(
+
+    Name='prod-alb',
+
+    Subnets=[
+        'subnet1',
+        'subnet2'
+    ]
+)
+asg = boto3.client(
+    'autoscaling'
+)
+
+asg.create_auto_scaling_group(
+
+    AutoScalingGroupName='web-asg',
+
+    MinSize=2,
+
+    MaxSize=10,
+
+    DesiredCapacity=2
+)
+rds = boto3.client('rds')
+
+rds.create_db_instance(
+
+    DBInstanceIdentifier='appdb',
+
+    Engine='mysql',
+
+    DBInstanceClass='db.t3.micro',
+
+    AllocatedStorage=20
+)
+
+cw = boto3.client(
+    'cloudwatch'
+)
+
+cw.put_metric_alarm(
+
+    AlarmName='HighCPU',
+
+    MetricName='CPUUtilization',
+
+    Namespace='AWS/EC2',
+
+    Threshold=80,
+
+    ComparisonOperator=
+    'GreaterThanThreshold'
+)
+def lambda_handler(event, context):
+
+    print(
+        "Automated Process"
+    )
+
+    return {
+        "statusCode":200
+    }
+
+route53 = boto3.client(
+    'route53'
+)
+
+route53.change_resource_record_sets(
+
+    HostedZoneId='zoneid',
+
+    ChangeBatch={
+        'Changes':[]
+    }
+)
+
+cf = boto3.client(
+    'cloudfront'
+)
+
+distribution = cf.create_distribution(
+
+    DistributionConfig={}
+)
+iam = boto3.client('iam')
+
+iam.create_user(
+
+    UserName='devops-user'
+)
+
+iam.attach_user_policy(
+
+    UserName='devops-user',
+
+    PolicyArn=
+    'arn:aws:iam::aws:policy/ReadOnlyAccess'
+)
+CREATE TABLE customers
+(
+    customer_id INT PRIMARY KEY,
+
+    customer_name VARCHAR(100),
+
+    email VARCHAR(100)
+);
+CREATE TABLE orders
+(
+    order_id INT PRIMARY KEY,
+
+    customer_id INT,
+
+    order_amount DECIMAL(10,2)
+);
+SELECT
+SUM(order_amount)
+FROM orders;
+
+
+aws ec2 run-instances \
+--image-id ami-123 \
+--instance-type t3.micro // aws cli examples launch ec2
+
+aws s3 ls aws rds describe-db-instances  aws cloudwatch list-metrics
+
+#!/bin/bash
+
+yum update -y
+
+yum install httpd -y
+
+systemctl start httpd
+
+systemctl enable httpd
+
+echo "Production App" \
+> /var/www/html/index.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
